@@ -725,10 +725,11 @@ let SubtargetPredicate = isGFX90APlus in {
   defm FLAT_ATOMIC_ADD_F64   : FLAT_Atomic_Pseudo<"flat_atomic_add_f64", VReg_64, f64>;
   defm FLAT_ATOMIC_MIN_F64   : FLAT_Atomic_Pseudo<"flat_atomic_min_f64", VReg_64, f64>;
   defm FLAT_ATOMIC_MAX_F64   : FLAT_Atomic_Pseudo<"flat_atomic_max_f64", VReg_64, f64>;
-  defm GLOBAL_ATOMIC_ADD_F64 : FLAT_Global_Atomic_Pseudo<"global_atomic_add_f64", VReg_64, f64>;
-  defm GLOBAL_ATOMIC_MIN_F64 : FLAT_Global_Atomic_Pseudo<"global_atomic_min_f64", VReg_64, f64>;
-  defm GLOBAL_ATOMIC_MAX_F64 : FLAT_Global_Atomic_Pseudo<"global_atomic_max_f64", VReg_64, f64>;
 } // End SubtargetPredicate = isGFX90APlus
+
+defm GLOBAL_ATOMIC_ADD_F64 : FLAT_Global_Atomic_Pseudo<"global_atomic_add_f64", VReg_64, f64>;
+defm GLOBAL_ATOMIC_MIN_F64 : FLAT_Global_Atomic_Pseudo<"global_atomic_min_f64", VReg_64, f64>;
+defm GLOBAL_ATOMIC_MAX_F64 : FLAT_Global_Atomic_Pseudo<"global_atomic_max_f64", VReg_64, f64>;
 
 let SubtargetPredicate = HasAtomicFlatPkAdd16Insts in {
   defm FLAT_ATOMIC_PK_ADD_F16    : FLAT_Atomic_Pseudo<"flat_atomic_pk_add_f16",  VGPR_32, v2f16>;
@@ -1943,21 +1944,23 @@ multiclass FLAT_Global_Real_Atomics_gfx940<bits<7> op> :
 }
 
 let SubtargetPredicate = isGFX940Plus in {
-  // These instructions are encoded differently on gfx90* and gfx940.
-  defm GLOBAL_ATOMIC_ADD_F32     : FLAT_Global_Real_Atomics_gfx940 <0x04d>;
-  defm GLOBAL_ATOMIC_PK_ADD_F16  : FLAT_Global_Real_Atomics_gfx940 <0x04e>;
 
   defm FLAT_ATOMIC_ADD_F64       : FLAT_Real_Atomics_gfx940<0x4f, FLAT_ATOMIC_ADD_F64>;
   defm FLAT_ATOMIC_MIN_F64       : FLAT_Real_Atomics_gfx940<0x50, FLAT_ATOMIC_MIN_F64>;
   defm FLAT_ATOMIC_MAX_F64       : FLAT_Real_Atomics_gfx940<0x51, FLAT_ATOMIC_MAX_F64>;
-  defm GLOBAL_ATOMIC_ADD_F64     : FLAT_Global_Real_Atomics_gfx940<0x4f>;
-  defm GLOBAL_ATOMIC_MIN_F64     : FLAT_Global_Real_Atomics_gfx940<0x50>;
-  defm GLOBAL_ATOMIC_MAX_F64     : FLAT_Global_Real_Atomics_gfx940<0x51>;
   defm FLAT_ATOMIC_ADD_F32       : FLAT_Real_Atomics_vi<0x4d, FLAT_ATOMIC_ADD_F32>;
   defm FLAT_ATOMIC_PK_ADD_F16    : FLAT_Real_Atomics_vi<0x4e, FLAT_ATOMIC_PK_ADD_F16>;
   defm FLAT_ATOMIC_PK_ADD_BF16   : FLAT_Real_Atomics_vi<0x52, FLAT_ATOMIC_PK_ADD_BF16>;
   defm GLOBAL_ATOMIC_PK_ADD_BF16 : FLAT_Global_Real_Atomics_vi<0x52>;
 } // End SubtargetPredicate = isGFX940Plus
+
+// These instructions are encoded differently on gfx90* and gfx940.
+defm GLOBAL_ATOMIC_ADD_F32     : FLAT_Global_Real_Atomics_gfx940<0x04d>;
+defm GLOBAL_ATOMIC_PK_ADD_F16  : FLAT_Global_Real_Atomics_gfx940<0x04e>;
+
+defm GLOBAL_ATOMIC_ADD_F64     : FLAT_Global_Real_Atomics_gfx940<0x4f>;
+defm GLOBAL_ATOMIC_MIN_F64     : FLAT_Global_Real_Atomics_gfx940<0x50>;
+defm GLOBAL_ATOMIC_MAX_F64     : FLAT_Global_Real_Atomics_gfx940<0x51>;
 
 //===----------------------------------------------------------------------===//
 // GFX10.
