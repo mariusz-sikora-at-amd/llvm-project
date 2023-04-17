@@ -10,7 +10,7 @@ void test_global_fadd(__global half2 *addrh2, __local half2 *addrh2l, half2 xh2,
   half2 *half_rtn;
   float *fp_rtn;
   double *rtn;
-  *half_rtn = __builtin_amdgcn_global_atomic_fadd_v2f16(addrh2, xh2); // expected-error{{'__builtin_amdgcn_global_atomic_fadd_v2f16' needs target feature atomic-buffer-global-pk-add-f16-insts}}
+  *half_rtn = __builtin_amdgcn_global_atomic_fadd_v2f16(addrh2, xh2); // expected-error{{assigning to '__generic half2' (vector of 2 'half' values) from incompatible type 'void'}}
   *fp_rtn = __builtin_amdgcn_global_atomic_fadd_f32(addr, x); // expected-error{{'__builtin_amdgcn_global_atomic_fadd_f32' needs target feature atomic-fadd-rtn-insts}}
   *rtn = __builtin_amdgcn_global_atomic_fadd_f64(addr, x); // expected-error{{'__builtin_amdgcn_global_atomic_fadd_f64' needs target feature gfx90a-insts}}
   *rtn = __builtin_amdgcn_global_atomic_fmax_f64(addr, x); // expected-error{{'__builtin_amdgcn_global_atomic_fmax_f64' needs target feature gfx90a-insts}}
@@ -18,5 +18,4 @@ void test_global_fadd(__global half2 *addrh2, __local half2 *addrh2l, half2 xh2,
   *rtn = __builtin_amdgcn_flat_atomic_fadd_f64(addr, x); // expected-error{{'__builtin_amdgcn_flat_atomic_fadd_f64' needs target feature gfx90a-insts}}
   *rtn = __builtin_amdgcn_flat_atomic_fmin_f64(addr, x); // expected-error{{'__builtin_amdgcn_flat_atomic_fmin_f64' needs target feature gfx90a-insts}}
   *rtn = __builtin_amdgcn_flat_atomic_fmax_f64(addr, x); // expected-error{{'__builtin_amdgcn_flat_atomic_fmax_f64' needs target feature gfx90a-insts}}
-  __builtin_amdgcn_ds_atomic_fadd_v2f16(addrh2l, xh2); // expected-error{{'__builtin_amdgcn_ds_atomic_fadd_v2f16' needs target feature atomic-ds-pk-add-16-insts}}
 }

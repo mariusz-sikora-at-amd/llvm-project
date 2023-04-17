@@ -340,6 +340,7 @@ void AMDGPU::fillAMDGPUFeatureMap(StringRef GPU, const Triple &T,
       Features["dot5-insts"] = true;
       Features["dot6-insts"] = true;
       Features["mai-insts"] = true;
+      Features["atomic-fadd-no-rtn-insts"] = true;
       [[fallthrough]];
     case GK_GFX906:
       Features["dl-insts"] = true;

@@ -17143,6 +17143,7 @@ Value *CodeGenFunction::EmitAMDGPUBuiltinExpr(unsigned BuiltinID,
   case AMDGPU::BI__builtin_amdgcn_global_atomic_fadd_f64:
   case AMDGPU::BI__builtin_amdgcn_global_atomic_fadd_f32:
   case AMDGPU::BI__builtin_amdgcn_global_atomic_fadd_v2f16:
+  case AMDGPU::BI__builtin_amdgcn_global_atomic_fadd_v2f16_no_ret:
   case AMDGPU::BI__builtin_amdgcn_global_atomic_fmin_f64:
   case AMDGPU::BI__builtin_amdgcn_global_atomic_fmax_f64:
   case AMDGPU::BI__builtin_amdgcn_flat_atomic_fadd_f64:
@@ -17158,6 +17159,7 @@ Value *CodeGenFunction::EmitAMDGPUBuiltinExpr(unsigned BuiltinID,
       IID = Intrinsic::amdgcn_global_atomic_fadd;
       break;
     case AMDGPU::BI__builtin_amdgcn_global_atomic_fadd_v2f16:
+    case AMDGPU::BI__builtin_amdgcn_global_atomic_fadd_v2f16_no_ret:
       ArgTy = llvm::FixedVectorType::get(
           llvm::Type::getHalfTy(getLLVMContext()), 2);
       IID = Intrinsic::amdgcn_global_atomic_fadd;

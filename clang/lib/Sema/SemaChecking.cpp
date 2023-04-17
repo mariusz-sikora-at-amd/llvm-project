@@ -4475,11 +4475,40 @@ bool Sema::CheckPPCMMAType(QualType Type, SourceLocation TypeLoc) {
   return false;
 }
 
+bool Sema::CheckAMDGCNBuiltinNoRetAtomicAndOverload(CallExpr *TheCall) {
+  auto TargetID = Context.getTargetInfo().getTargetID();
+  if (!TargetID || TargetID->find("gfx908") == std::string::npos)
+    return false;
+#if 0
+  Expr *Callee = TheCall->getCallee();
+  DeclRefExpr *DRE = cast<DeclRefExpr>(Callee->IgnoreParenCasts());
+  StringRef NewBuiltinName = Context.BuiltinInfo.getName(AMDGPU::BI__builtin_amdgcn_global_atomic_fadd_v2f16_no_ret);
+  DeclarationName DN(&Context.Idents.get(NewBuiltinName));
+  LookupResult Res(*this, DN, DRE->getBeginLoc(), LookupOrdinaryName);
+  LookupName(Res, TUScope, /*AllowBuiltinCreation=*/true);
+  assert(Res.getFoundDecl());
+  FunctionDecl *NewBuiltinDecl = dyn_cast<FunctionDecl>(Res.getFoundDecl());
+  if (!NewBuiltinDecl)
+    return true;
+
+  DeclRefExpr *NewDRE = DeclRefExpr::Create(Context, DRE->getQualifierLoc(), SourceLocation(), NewBuiltinDecl, /*enclosing*/ false, DRE->getLocation(), Context.BuiltinFnTy,
+      	    DRE->getValueKind(), nullptr, nullptr, DRE->isNonOdrUse());
+  QualType CalleePtrTy = Context.getPointerType(NewBuiltinDecl->getType());
+  ExprResult PromotedCall = ImpCastExprToType(NewDRE, CalleePtrTy, CK_BuiltinFnToFnPtr);
+  TheCall->setCallee(PromotedCall.get());
+#endif
+  TheCall->setType(Context.VoidTy);
+
+  return false;
+}
+
 bool Sema::CheckAMDGCNBuiltinFunctionCall(unsigned BuiltinID,
                                           CallExpr *TheCall) {
   // position of memory order and scope arguments in the builtin
   unsigned OrderIndex, ScopeIndex;
   switch (BuiltinID) {
+  case AMDGPU::BI__builtin_amdgcn_global_atomic_fadd_v2f16:
+    return CheckAMDGCNBuiltinNoRetAtomicAndOverload(TheCall);
   case AMDGPU::BI__builtin_amdgcn_atomic_inc32:
   case AMDGPU::BI__builtin_amdgcn_atomic_inc64:
   case AMDGPU::BI__builtin_amdgcn_atomic_dec32:
